@@ -48,8 +48,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 100;
   }
   .header h1 { font-size: 18px; font-weight: 600; letter-spacing: 0.5px; }
@@ -74,12 +76,17 @@
     color: #856404;
     border-bottom: 1px solid #ffc107;
     text-align: center;
+    position: fixed;
+    top: 52px;
+    left: 0;
+    right: 0;
+    z-index: 99;
   }
   .admin-banner.visible { display: block; }
 
   /* Tree container */
   .tree-container {
-    padding: 40px 40px 60px;
+    padding: 70px 40px 60px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -236,7 +243,8 @@
     overflow: hidden;
     transition: max-height 0.3s ease;
   }
-  .dept-card.expanded .dept-details {
+  .dept-card.expanded .dept-details,
+  .card-ceo.expanded .dept-details {
     max-height: 2000px;
   }
   .expand-indicator {
@@ -252,7 +260,8 @@
     transition: transform 0.2s;
     display: inline-block;
   }
-  .dept-card.expanded .expand-indicator .arrow {
+  .dept-card.expanded .expand-indicator .arrow,
+  .card-ceo.expanded .expand-indicator .arrow {
     transform: rotate(90deg);
   }
 
@@ -600,10 +609,33 @@
 
   <!-- CEO -->
   <div class="level">
-    <div class="card card-ceo" style="position:relative;">
+    <div class="card card-ceo" style="position:relative; cursor:pointer; text-align:left; max-width:480px;" onclick="this.classList.toggle('expanded')">
       <button class="admin-btn" onclick="editTopCard('ceo', event)">&#9998;</button>
-      <div class="card-title" id="ceo-title">CEO</div>
-      <div class="card-subtitle" id="ceo-subtitle">Chief Executive Officer</div>
+      <div style="text-align:center;">
+        <div class="card-title" id="ceo-title">CEO</div>
+        <div class="card-subtitle" id="ceo-subtitle">Chief Executive Officer</div>
+        <div class="expand-indicator" style="justify-content:center; color:rgba(255,255,255,0.5);"><span class="arrow">&#9656;</span> Details</div>
+      </div>
+      <div class="dept-details">
+        <div style="border-top:1px solid rgba(255,255,255,0.15); margin-top:10px; padding-top:10px;">
+          <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:rgba(255,255,255,0.5); margin-bottom:6px;">Functions</div>
+          <ul style="list-style:none; padding:0;">
+            <li style="font-size:12px; color:rgba(255,255,255,0.85); padding:2px 0 2px 12px; position:relative; line-height:1.4;"><span style="position:absolute;left:0;color:rgba(255,255,255,0.4);">•</span>Coordinated performance of all departments</li>
+            <li style="font-size:12px; color:rgba(255,255,255,0.85); padding:2px 0 2px 12px; position:relative; line-height:1.4;"><span style="position:absolute;left:0;color:rgba(255,255,255,0.4);">•</span>Department heads reports analysis</li>
+            <li style="font-size:12px; color:rgba(255,255,255,0.85); padding:2px 0 2px 12px; position:relative; line-height:1.4;"><span style="position:absolute;left:0;color:rgba(255,255,255,0.4);">•</span>Strategic decision making</li>
+            <li style="font-size:12px; color:rgba(255,255,255,0.85); padding:2px 0 2px 12px; position:relative; line-height:1.4;"><span style="position:absolute;left:0;color:rgba(255,255,255,0.4);">•</span>Monthly report preparation and publishing</li>
+            <li style="font-size:12px; color:rgba(255,255,255,0.85); padding:2px 0 2px 12px; position:relative; line-height:1.4;"><span style="position:absolute;left:0;color:rgba(255,255,255,0.4);">•</span>Work plan approval for all departments</li>
+            <li style="font-size:12px; color:rgba(255,255,255,0.85); padding:2px 0 2px 12px; position:relative; line-height:1.4;"><span style="position:absolute;left:0;color:rgba(255,255,255,0.4);">•</span>Regular departments performance analysis</li>
+            <li style="font-size:12px; color:rgba(255,255,255,0.85); padding:2px 0 2px 12px; position:relative; line-height:1.4;"><span style="position:absolute;left:0;color:rgba(255,255,255,0.4);">•</span>Company strategy implementation</li>
+            <li style="font-size:12px; color:rgba(255,255,255,0.85); padding:2px 0 2px 12px; position:relative; line-height:1.4;"><span style="position:absolute;left:0;color:rgba(255,255,255,0.4);">•</span>Crisis management</li>
+            <li style="font-size:12px; color:rgba(255,255,255,0.85); padding:2px 0 2px 12px; position:relative; line-height:1.4;"><span style="position:absolute;left:0;color:rgba(255,255,255,0.4);">•</span>Assets and resources control</li>
+            <li style="font-size:12px; color:rgba(255,255,255,0.85); padding:2px 0 2px 12px; position:relative; line-height:1.4;"><span style="position:absolute;left:0;color:rgba(255,255,255,0.4);">•</span>Company mission execution and ideals maintenance</li>
+            <li style="font-size:12px; color:rgba(255,255,255,0.85); padding:2px 0 2px 12px; position:relative; line-height:1.4;"><span style="position:absolute;left:0;color:rgba(255,255,255,0.4);">•</span>Departments efficiency improvement</li>
+          </ul>
+          <div style="margin-top:8px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:rgba(255,255,255,0.5); margin-bottom:4px;">Product</div>
+          <div style="display:inline-block; font-size:12px; background:rgba(255,255,255,0.15); color:white; padding:3px 10px; border-radius:4px;">Profitable growing company performing its mission</div>
+        </div>
+      </div>
     </div>
     <div class="vertical-line"></div>
   </div>
