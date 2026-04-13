@@ -244,7 +244,8 @@
     transition: max-height 0.3s ease;
   }
   .dept-card.expanded .dept-details,
-  .card-ceo.expanded .dept-details {
+  .card-ceo.expanded .dept-details,
+  .card-founders.expanded .dept-details {
     max-height: 2000px;
   }
   .expand-indicator {
@@ -261,7 +262,8 @@
     display: inline-block;
   }
   .dept-card.expanded .expand-indicator .arrow,
-  .card-ceo.expanded .expand-indicator .arrow {
+  .card-ceo.expanded .expand-indicator .arrow,
+  .card-founders.expanded .expand-indicator .arrow {
     transform: rotate(90deg);
   }
 
@@ -599,10 +601,26 @@
 <div class="tree-container">
   <!-- Founders -->
   <div class="level">
-    <div class="card card-founders" style="position:relative;">
+    <div class="card card-founders" style="position:relative; cursor:pointer; text-align:left; max-width:480px;" onclick="this.classList.toggle('expanded')">
       <button class="admin-btn" onclick="editTopCard('founders', event)">&#9998;</button>
-      <div class="card-title" id="founders-title">Founders</div>
-      <div class="card-subtitle" id="founders-subtitle">Board of Founders</div>
+      <div style="text-align:center;">
+        <div class="card-title" id="founders-title">Founders</div>
+        <div class="card-subtitle" id="founders-subtitle">Board of Founders</div>
+        <div class="expand-indicator" style="justify-content:center; color:rgba(255,255,255,0.5);"><span class="arrow">&#9656;</span> Details</div>
+      </div>
+      <div class="dept-details">
+        <div style="border-top:1px solid rgba(255,255,255,0.15); margin-top:10px; padding-top:10px;">
+          <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:rgba(255,255,255,0.5); margin-bottom:6px;">Functions</div>
+          <ul style="list-style:none; padding:0;">
+            <li style="font-size:12px; color:rgba(255,255,255,0.85); padding:2px 0 2px 12px; position:relative; line-height:1.4;"><span style="position:absolute;left:0;color:rgba(255,255,255,0.4);">•</span>Founders meetings and strategic sessions</li>
+            <li style="font-size:12px; color:rgba(255,255,255,0.85); padding:2px 0 2px 12px; position:relative; line-height:1.4;"><span style="position:absolute;left:0;color:rgba(255,255,255,0.4);">•</span>Strategy discussions and company direction</li>
+            <li style="font-size:12px; color:rgba(255,255,255,0.85); padding:2px 0 2px 12px; position:relative; line-height:1.4;"><span style="position:absolute;left:0;color:rgba(255,255,255,0.4);">•</span>Selection of development pathways</li>
+            <li style="font-size:12px; color:rgba(255,255,255,0.85); padding:2px 0 2px 12px; position:relative; line-height:1.4;"><span style="position:absolute;left:0;color:rgba(255,255,255,0.4);">•</span>CEO hiring, supervision and performance control</li>
+          </ul>
+          <div style="margin-top:8px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:rgba(255,255,255,0.5); margin-bottom:4px;">Product</div>
+          <div style="display:inline-block; font-size:12px; background:rgba(255,255,255,0.15); color:white; padding:3px 10px; border-radius:4px; line-height:1.4;">Coordinated activities of co-owners and employees resulting in successful company development</div>
+        </div>
+      </div>
     </div>
     <div class="vertical-line"></div>
   </div>
@@ -1047,13 +1065,14 @@ const DEFAULT_DATA = {
         {
           id: "5.6",
           name: "Logistics",
+          assignee: "",
           product: "Inner and outer orders delivered on time",
           functions: [
             "Logistics analysis and delivery route optimization",
             "Logistics section training"
           ],
           subsections: [
-            { name: "Equipment Delivery (Turkey)", functions: ["Order dispatch from warehouse to sales office", "Customs clearance control", "Broker coordination", "Cargo preparation for shipment", "Shipment cost calculation and markup", "Documentation preparation", "Equipment acceptance (loading/unloading)"] }
+            { name: "Equipment Delivery", functions: ["Order shipment from production to customers", "Customs clearance organization", "Broker work control", "Cargo preparation for shipment", "Cargo pickup from clients or exhibitions", "Shipment cost calculation and markup", "Documentation preparation control", "Logistics contractor search and negotiation", "Shipping calendar management", "Equipment acceptance organization"] }
           ]
         }
       ],
@@ -1079,6 +1098,26 @@ const DEFAULT_DATA = {
         "Department budgets",
         "Cash flow forecasts",
         "Expense approvals"
+      ],
+      sections: [
+        {
+          id: "6.1",
+          name: "Finance (Czech Republic)",
+          assignee: "",
+          product: "Compliant accounting and timely reporting",
+          functions: [
+            "Primary documentation receipt and input",
+            "Register maintenance",
+            "Electronic document management",
+            "CFO report preparation",
+            "Accounting software management"
+          ],
+          subsections: [
+            { name: "External Accounting", functions: ["Accounting statements formation", "Tax reporting", "Tax optimization", "Regulatory authorities communication"] },
+            { name: "Primary Documentation", functions: ["Primary documentation receipt and input", "Register maintenance", "Electronic document management", "CFO report preparation", "Accounting software management"] },
+            { name: "Payments", functions: ["Payment calendar maintenance", "Payment reconciliation", "Department budgeting and planning", "Payment orders creation", "Bank statements distribution", "Payroll calculation and processing", "Payroll reporting and personnel fund filing"] }
+          ]
+        }
       ],
       subdepts: []
     },
@@ -1246,6 +1285,7 @@ function render() {
             </div>
             <div class="section-body">
               <div class="section-content">
+                ${sec.assignee ? `<div style="font-size:11px;color:var(--text-secondary);font-style:italic;margin-top:4px;">&#128100; ${sec.assignee}</div>` : ''}
                 ${sec.product ? `<div class="section-product">&#10004; ${sec.product}</div>` : ''}
                 <ul class="section-functions" style="list-style:none;padding:0;">
                   ${sec.functions.map(f => `<li>${f}</li>`).join('')}
@@ -1373,8 +1413,20 @@ function editDept(id, e) {
     <textarea id="ed-functions">${dept.functions.join('\n')}</textarea>
     <label>Deliverables / Products (one per line)</label>
     <textarea id="ed-products">${dept.products.join('\n')}</textarea>
-    <label>Sub-departments (JSON, optional)</label>
-    <textarea id="ed-subdepts" style="font-family:monospace;font-size:11px;">${JSON.stringify(dept.subdepts || [], null, 2)}</textarea>
+    ${dept.sections && dept.sections.length > 0 ? `
+      <label>Section Assignees</label>
+      <div style="background:#f8f9fa;border-radius:6px;padding:8px;margin-top:4px;">
+        ${dept.sections.map((sec, i) => `
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+            <span style="font-size:11px;font-weight:600;min-width:30px;">${sec.id}</span>
+            <span style="font-size:12px;flex:1;">${sec.name}</span>
+            <input class="sec-assignee-input" data-sec-idx="${i}" value="${sec.assignee || ''}" placeholder="Assignee..." style="width:140px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:12px;">
+          </div>
+        `).join('')}
+      </div>
+    ` : ''}
+    <label>Sections (JSON, advanced)</label>
+    <textarea id="ed-sections" style="font-family:monospace;font-size:11px;min-height:60px;">${JSON.stringify(dept.sections || [], null, 2)}</textarea>
   `;
   document.getElementById('editModal').classList.add('visible');
 }
@@ -1392,7 +1444,16 @@ function saveModal() {
     dept.theme = document.getElementById('ed-theme').value;
     dept.functions = document.getElementById('ed-functions').value.split('\n').filter(l => l.trim());
     dept.products = document.getElementById('ed-products').value.split('\n').filter(l => l.trim());
-    try { dept.subdepts = JSON.parse(document.getElementById('ed-subdepts').value); }
+    // Save section assignees from quick inputs
+    const secInputs = document.querySelectorAll('.sec-assignee-input');
+    secInputs.forEach(input => {
+      const idx = parseInt(input.dataset.secIdx);
+      if (dept.sections && dept.sections[idx]) {
+        dept.sections[idx].assignee = input.value;
+      }
+    });
+    // Save full sections JSON (advanced)
+    try { const secJson = JSON.parse(document.getElementById('ed-sections').value); dept.sections = secJson; }
     catch(e) { /* keep existing */ }
     editingDeptId = null;
   }
