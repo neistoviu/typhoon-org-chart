@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Typhoon Roasters — Organization Structure</title>
+<style>
+  :root {
+    --bg: #f5f6fa;
+    --card-bg: #ffffff;
+    --border: #e1e4e8;
+    --text: #24292e;
+    --text-secondary: #586069;
+    --accent: #0366d6;
+    --line: #d1d5da;
+    --founders: #1b1f23;
+    --ceo: #24292e;
+    --support: #e8f5e9;
+    --support-border: #81c784;
+    --revenue: #fff3e0;
+    --revenue-border: #ffb74d;
+    --operations: #e3f2fd;
+    --operations-border: #64b5f6;
+    --tech: #f3e5f5;
+    --tech-border: #ba68c8;
+    --finance: #fce4ec;
+    --finance-border: #e57373;
+    --admin-bg: #fffde7;
+    --tag-bg: #f1f8ff;
+    --tag-text: #0366d6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: auto;
+  }
+
+  /* Header */
+  .header {
+    background: var(--founders);
+    color: white;
+    padding: 16px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header h1 { font-size: 18px; font-weight: 600; letter-spacing: 0.5px; }
+  .header-right { display: flex; align-items: center; gap: 12px; }
+  .admin-toggle {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+  }
+  .admin-toggle:hover { background: rgba(255,255,255,0.2); }
+  .admin-toggle.active { background: #f6c23e; color: #1b1f23; border-color: #f6c23e; }
+  .admin-banner {
+    display: none;
+    background: var(--admin-bg);
+    padding: 8px 32px;
+    font-size: 13px;
+    color: #856404;
+    border-bottom: 1px solid #ffc107;
+    text-align: center;
+  }
+  .admin-banner.visible { display: block; }
+
+  /* Tree container */
+  .tree-container {
+    padding: 40px 20px 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: fit-content;
+  }
+
+  /* Connection lines */
+  .level {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+  .vertical-line {
+    width: 2px;
+    height: 32px;
+    background: var(--line);
+  }
+  .horizontal-connector {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .horizontal-connector::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    height: 2px;
+    background: var(--line);
+  }
+  .departments-row {
+    display: flex;
+    gap: 12px;
+    position: relative;
+    padding-top: 32px;
+  }
+  .departments-row::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    height: 2px;
+    background: var(--line);
+    left: var(--line-left, 115px);
+    right: var(--line-right, 115px);
+  }
+  .dept-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .dept-wrapper .vertical-line {
+    height: 32px;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    transition: all 0.2s;
+    position: relative;
+  }
+  .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); transform: translateY(-1px); }
+
+  /* Top-level cards */
+  .card-founders {
+    background: var(--founders);
+    color: white;
+    border: none;
+    min-width: 220px;
+  }
+  .card-founders .card-title { color: white; }
+  .card-founders .card-subtitle { color: rgba(255,255,255,0.7); }
+
+  .card-ceo {
+    background: var(--ceo);
+    color: white;
+    border: none;
+    min-width: 220px;
+  }
+  .card-ceo .card-title { color: white; }
+  .card-ceo .card-subtitle { color: rgba(255,255,255,0.7); }
+
+  .card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+  .card-subtitle {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  /* Department cards */
+  .dept-card {
+    width: 230px;
+    text-align: left;
+    cursor: pointer;
+    border-left: 4px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .dept-card .card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .dept-number {
+    font-size: 28px;
+    font-weight: 800;
+    opacity: 0.15;
+    line-height: 1;
+    position: absolute;
+    top: 12px;
+    right: 16px;
+  }
+  .dept-role {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--tag-text);
+    background: var(--tag-bg);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-top: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .dept-assignee {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 8px;
+    font-style: italic;
+  }
+  .dept-assignee::before {
+    content: '👤 ';
+  }
+
+  /* Expandable sections */
+  .dept-details {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  .dept-card.expanded .dept-details {
+    max-height: 2000px;
+  }
+  .expand-indicator {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s;
+  }
+  .expand-indicator .arrow {
+    transition: transform 0.2s;
+    display: inline-block;
+  }
+  .dept-card.expanded .expand-indicator .arrow {
+    transform: rotate(90deg);
+  }
+
+  .detail-section {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .detail-section h4 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+  }
+  .detail-section ul {
+    list-style: none;
+    padding: 0;
+  }
+  .detail-section li {
+    font-size: 12.5px;
+    color: var(--text);
+    padding: 3px 0;
+    padding-left: 14px;
+    position: relative;
+    line-height: 1.4;
+  }
+  .detail-section li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--text-secondary);
+  }
+  .product-tag {
+    display: inline-block;
+    font-size: 12px;
+    background: #f0f0f0;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin: 2px 4px 2px 0;
+    color: var(--text);
+  }
+
+  /* Color themes for departments */
+  .dept-support { border-left-color: var(--support-border); background: linear-gradient(135deg, var(--support) 0%, var(--card-bg) 100%); }
+  .dept-revenue { border-left-color: var(--revenue-border); background: linear-gradient(135deg, var(--revenue) 0%, var(--card-bg) 100%); }
+  .dept-operations { border-left-color: var(--operations-border); background: linear-gradient(135deg, var(--operations) 0%, var(--card-bg) 100%); }
+  .dept-tech { border-left-color: var(--tech-border); background: linear-gradient(135deg, var(--tech) 0%, var(--card-bg) 100%); }
+  .dept-finance { border-left-color: var(--finance-border); background: linear-gradient(135deg, var(--finance) 0%, var(--card-bg) 100%); }
+
+  /* Sections (sub-departments) — nested accordions */
+  .sections-list {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  .sections-list h4 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+  .section-item {
+    background: rgba(255,255,255,0.7);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 6px;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+  .section-item:hover { box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 10px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .section-header .sec-arrow {
+    font-size: 10px;
+    color: var(--text-secondary);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .section-item.sec-open .section-header .sec-arrow {
+    transform: rotate(90deg);
+  }
+  .section-header .sec-number {
+    font-size: 10px;
+    font-weight: 700;
+    color: white;
+    background: var(--text-secondary);
+    border-radius: 3px;
+    min-width: 22px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .section-header .sec-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .section-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.25s ease;
+  }
+  .section-item.sec-open .section-body {
+    max-height: 800px;
+  }
+  .section-content {
+    padding: 0 10px 10px 10px;
+    border-top: 1px solid var(--border);
+  }
+  .section-product {
+    display: inline-block;
+    font-size: 11px;
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-top: 6px;
+    font-weight: 500;
+  }
+  .section-functions {
+    margin-top: 6px;
+  }
+  .section-functions li {
+    font-size: 11.5px;
+    color: var(--text);
+    padding: 2px 0 2px 12px;
+    position: relative;
+    line-height: 1.35;
+  }
+  .section-functions li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--text-secondary);
+    font-size: 10px;
+  }
+  /* Sub-sections inside sections */
+  .subsection {
+    background: rgba(0,0,0,0.02);
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 6px;
+    margin-top: 6px;
+  }
+  .subsection-header {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 8px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .subsection-header .subsec-arrow {
+    font-size: 9px;
+    color: var(--text-secondary);
+    transition: transform 0.2s;
+  }
+  .subsection.subsec-open .subsection-header .subsec-arrow {
+    transform: rotate(90deg);
+  }
+  .subsection-header .subsec-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-secondary);
+  }
+  .subsection-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease;
+  }
+  .subsection.subsec-open .subsection-body {
+    max-height: 400px;
+  }
+  .subsection-body ul {
+    padding: 0 8px 6px 8px;
+    list-style: none;
+  }
+  .subsection-body li {
+    font-size: 11px;
+    color: var(--text);
+    padding: 1.5px 0 1.5px 10px;
+    position: relative;
+    line-height: 1.3;
+  }
+  .subsection-body li::before {
+    content: '–';
+    position: absolute;
+    left: 0;
+    color: #bbb;
+    font-size: 10px;
+  }
+
+  /* Admin mode */
+  .admin-btn {
+    display: none;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #f6c23e;
+    border: none;
+    border-radius: 4px;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    font-size: 12px;
+    z-index: 10;
+  }
+  body.admin-mode .admin-btn { display: flex; align-items: center; justify-content: center; }
+
+  /* Legend */
+  .legend {
+    display: flex;
+    gap: 20px;
+    margin-top: 40px;
+    padding: 16px 24px;
+    background: white;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+  }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.visible { display: flex; }
+  .modal {
+    background: white;
+    border-radius: 12px;
+    padding: 28px;
+    width: 500px;
+    max-width: 90vw;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+  .modal h3 { margin-bottom: 16px; font-size: 16px; }
+  .modal label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-top: 12px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+  .modal input, .modal textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: inherit;
+  }
+  .modal textarea { resize: vertical; min-height: 80px; }
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+    justify-content: flex-end;
+  }
+  .btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: white;
+    font-family: inherit;
+  }
+  .btn-primary { background: var(--accent); color: white; border-color: var(--accent); }
+  .btn-danger { background: #dc3545; color: white; border-color: #dc3545; }
+
+  /* Password modal */
+  .password-modal input { margin-top: 8px; }
+
+  /* Responsive */
+  @media (max-width: 1400px) {
+    .departments-row { gap: 8px; }
+    .dept-card { width: 210px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>TYPHOON ROASTERS — ORGANIZATION STRUCTURE</h1>
+  <div class="header-right">
+    <span id="lastUpdated" style="font-size:12px; opacity:0.5;"></span>
+    <button class="admin-toggle" id="adminToggle" onclick="toggleAdmin()">Admin</button>
+  </div>
+</div>
+<div class="admin-banner" id="adminBanner">
+  Admin Mode — click department cards to edit. Changes auto-save.
+</div>
+
+<div class="tree-container">
+  <!-- Founders -->
+  <div class="level">
+    <div class="card card-founders" style="position:relative;">
+      <button class="admin-btn" onclick="editTopCard('founders', event)">&#9998;</button>
+      <div class="card-title" id="founders-title">Founders</div>
+      <div class="card-subtitle" id="founders-subtitle">Board of Founders</div>
+    </div>
+    <div class="vertical-line"></div>
+  </div>
+
+  <!-- CEO -->
+  <div class="level">
+    <div class="card card-ceo" style="position:relative;">
+      <button class="admin-btn" onclick="editTopCard('ceo', event)">&#9998;</button>
+      <div class="card-title" id="ceo-title">CEO</div>
+      <div class="card-subtitle" id="ceo-subtitle">Chief Executive Officer</div>
+    </div>
+    <div class="vertical-line"></div>
+  </div>
+
+  <!-- Departments row -->
+  <div class="departments-row" id="deptRow">
+    <!-- Rendered by JS -->
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--support-border)"></div> Support</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--revenue-border)"></div> Revenue</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--operations-border)"></div> Operations</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--tech-border)"></div> Tech & Production</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--finance-border)"></div> Finance</div>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <h3 id="modalTitle">Edit Department</h3>
+    <div id="modalBody"></div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveModal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- Password Modal -->
+<div class="modal-overlay" id="passwordModal">
+  <div class="modal password-modal" style="width:340px;">
+    <h3>Admin Access</h3>
+    <p style="font-size:13px;color:var(--text-secondary);">Enter password to enable editing.</p>
+    <input type="password" id="adminPassword" placeholder="Password" onkeydown="if(event.key==='Enter')checkPassword()">
+    <div class="modal-actions">
+      <button class="btn" onclick="closePasswordModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="checkPassword()">Enter</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// DATA — edit this to change the structure
+// ═══════════════════════════════════════
+const DEFAULT_DATA = {
+  adminPassword: "typhoon2026",
+  lastUpdated: "",
+  topCards: {
+    founders: { title: "Founders", subtitle: "Board of Founders" },
+    ceo: { title: "CEO", subtitle: "Chief Executive Officer" }
+  },
+  departments: [
+    {
+      id: "hr",
+      number: 1,
+      name: "HR Department",
+      role: "HR Manager",
+      assignee: "",
+      theme: "support",
+      functions: [
+        "Recruitment, adaptation and talent management",
+        "Employee training and skills development",
+        "Performance appraisal and KPI management",
+        "Corporate culture and employee engagement",
+        "Internal safety and compliance"
+      ],
+      products: [
+        "Hired & trained A-category employees",
+        "High eNPS score",
+        "Effective employees performing their duties"
+      ],
+      sections: [
+        {
+          id: "1.1",
+          name: "Hire & Adaptation",
+          product: "Effective employees knowing how to perform their duties",
+          functions: [
+            "Recruitment and initial assessment of candidates",
+            "External candidates reserve base maintenance",
+            "Labor market research",
+            "Motivation system adjustment proposals"
+          ],
+          subsections: [
+            { name: "Recruitment", functions: ["Draw up vacancies", "Organize hiring", "Perform interviews", "Test candidates"] },
+            { name: "Employees Control", functions: ["Control probation period of trainees", "Nominate employees to positions, update org structure", "Record hours worked by employees"] },
+            { name: "Staff Documentation", functions: ["Draw up and sign labour contracts", "Maintain staff documentation"] },
+            { name: "Post Profiles", functions: ["Compile post profiles of employees", "Operate regulating documents", "Perform regulations inspections", "Control training according to profiles"] }
+          ]
+        },
+        {
+          id: "1.2",
+          name: "Training & Skills Upgrading",
+          product: "Efficient trained employees fully performing their duties",
+          functions: [
+            "Gather data on required training for employees",
+            "Prepare proposals for employee training",
+            "Update the database of training materials",
+            "Organize employee training",
+            "Prepare job folders / employee handbooks",
+            "Maintain up-to-date manuals for all divisions"
+          ],
+          subsections: [
+            { name: "Training Materials Preparation", functions: ["Collect and compile training materials", "Update, store and dispatch training materials"] },
+            { name: "Personnel Programs Elaboration", functions: ["Create training programs per employee based on interview", "Approve training programs with section heads"] },
+            { name: "Training Organisation", functions: ["Organize and perform training", "Organize training with guest trainers and external agencies", "Control training schedule", "Compile data on employee training"] }
+          ]
+        },
+        {
+          id: "1.3",
+          name: "Performance Appraisal",
+          product: "Stable and valuable employees making their products",
+          functions: [
+            "Update requirements base (competency matrix, job profiles)",
+            "Organize performance appraisals",
+            "Prepare individual development plans",
+            "Update the internal reserve base",
+            "Transmit data for personnel decisions (position, salary, dismissal)"
+          ],
+          subsections: [
+            { name: "Orders & Programs Execution Control", functions: ["Control execution of senior instructions", "Debrief task completion reports"] },
+            { name: "Key Indicators Management", functions: ["Compile and store all position indicators", "Update company-wide dashboard", "Control filling of statistics by employees"] },
+            { name: "Employees Efficiency Management", functions: ["Solve cases within company", "Control adherence to standards and regulations", "Elaborate intangible incentive system", "Increase efficiency of employees"] },
+            { name: "Internal Safety", functions: ["Control security and video surveillance", "Control employee and visitor access to premises", "Organize physical security", "Resolve security-related situations"] }
+          ]
+        },
+        {
+          id: "1.4",
+          name: "Corporate Culture",
+          product: "High eNPS",
+          functions: [
+            "Organize corporate events",
+            "Organize external positive image for job seekers",
+            "Prepare material and non-material incentive measures",
+            "Prepare and control business ethics rules"
+          ],
+          subsections: []
+        }
+      ],
+      subdepts: []
+    },
+    {
+      id: "marketing",
+      number: 2,
+      name: "Marketing Department",
+      role: "Head of Marketing",
+      assignee: "",
+      theme: "revenue",
+      functions: [
+        "Market research and competitive analysis",
+        "Reporting, forecasting and analytics",
+        "Qualified lead generation across all channels",
+        "Marketing channels development and control",
+        "Promotional campaigns planning and execution",
+        "Contractor quality control",
+        "Existing client base nurturing",
+        "Marketing team training",
+        "Incoming leads and competitor analysis"
+      ],
+      products: [
+        "New purchase orders",
+        "Qualified leads (MQLs)",
+        "Market research reports",
+        "Brand content & materials"
+      ],
+      sections: [
+        {
+          id: "2.1",
+          name: "Paid Advertising (Targeting)",
+          product: "Cheap qualified leads from ads",
+          functions: [
+            "Ad cabinet management (tags, links, labels)",
+            "Hypothesis testing and performance forecasting",
+            "Keyword and negative keyword list management",
+            "Ad creatives: A/B testing and optimization",
+            "Bid management and budget allocation",
+            "All paid channels oversight",
+            "Weekly / monthly / annual reporting"
+          ],
+          subsections: []
+        },
+        {
+          id: "2.2",
+          name: "Design & Content",
+          product: "Campaign materials (print, video, presentations)",
+          functions: [
+            "Online presentations and sales materials",
+            "Website layouts and landing pages design",
+            "New site pages and content blocks creation"
+          ],
+          subsections: []
+        },
+        {
+          id: "2.3",
+          name: "Website",
+          product: "Corporate website with up-to-date content",
+          functions: [
+            "Content publishing on corporate websites",
+            "Coordination with developers on site maintenance",
+            "Prompt issue resolution and uptime monitoring",
+            "Quality control of all site elements"
+          ],
+          subsections: [
+            { name: "SEO", functions: ["Page structure optimization", "Page speed improvement", "Semantic core, meta tags, key phrases", "Indexing setup and link building", "Algorithm change adaptation", "SEO reporting"] }
+          ]
+        },
+        {
+          id: "2.4",
+          name: "PR & Communications",
+          product: "Positive brand image and media presence",
+          functions: [
+            "Blogger and influencer relations",
+            "External communications and press",
+            "Publishing and content partnerships"
+          ],
+          subsections: []
+        },
+        {
+          id: "2.5",
+          name: "SMM",
+          product: "Active audience interest in brand and products",
+          functions: [
+            "Content plan creation and execution",
+            "Post writing and visual content production",
+            "Community management on social networks",
+            "Subscriber growth strategies",
+            "Hypothesis testing to hit engagement targets",
+            "Weekly / monthly / annual reporting"
+          ],
+          subsections: []
+        }
+      ],
+      subdepts: []
+    },
+    {
+      id: "sales",
+      number: 3,
+      name: "Sales Department",
+      role: "Managing Director",
+      assignee: "",
+      theme: "revenue",
+      functions: [
+        "Sales conversion analysis and optimization",
+        "Sales plan development and execution control",
+        "Distributor network management",
+        "Department performance review",
+        "Cross-department coordination",
+        "Client relationship management"
+      ],
+      products: [
+        "Growing revenue and closed deals",
+        "Increasing number of distributors",
+        "Satisfied clients with high LTV"
+      ],
+      sections: [
+        {
+          id: "3.2",
+          name: "Direct Sales",
+          product: "Leads converted to sales",
+          functions: [
+            "Sales team management and KPI control",
+            "Sales plan fulfillment oversight",
+            "New managers onboarding and integration",
+            "Sales training and coaching",
+            "Standard procedures and scripts development",
+            "Compliance with sales standards",
+            "Dispute resolution assistance",
+            "Team morale and motivation system",
+            "Sales plan distribution among managers"
+          ],
+          subsections: [
+            { name: "Lead Qualification (Leadorub)", functions: ["Incoming leads qualification", "Weekly lead quality reports for marketers", "KEV coordination for Hunters", "Lead distribution to Hunters", "Lost leads reanimation", "Long-term and lost lead follow-ups", "Cold calls to distributor base", "Sales standards compliance"] },
+            { name: "Hunting (Closers)", functions: ["KFS-1 sales calls execution", "Sales plan fulfillment", "Test drives and product presentations", "International exhibition participation", "Sales and performance reporting", "Contract negotiation and invoicing", "Full sales cycle management to close"] },
+            { name: "Portfolio Management", functions: ["Client prep and onboarding communication", "Accounts receivable and payment reminders", "Equipment delivery coordination", "Commissioning organization", "Repeat sales and upsell", "Order details coordination (specs, terms, delivery)", "Sales reporting and performance tracking"] }
+          ]
+        },
+        {
+          id: "3.3",
+          name: "Distributor Relations",
+          product: "Growing distributor network and distributor revenue",
+          functions: [
+            "Potential distributor sourcing",
+            "CRM pipeline management for distributors",
+            "Distributor terms and agreements development",
+            "Distributor performance supervision",
+            "Dispute management with distributors",
+            "Distributor growth plans (birthing plans)",
+            "Product updates and promotions for distributors",
+            "Distributor meetings and events organization",
+            "Qualitative and quantitative reporting"
+          ],
+          subsections: [
+            { name: "Events & Exhibitions", functions: ["Exhibition participation planning and execution", "Preparatory activities and logistics", "Exhibition lead management", "Annual exhibition calendar coordination", "Equipment shipment to exhibitions", "Distributor exhibition terms coordination", "Exhibition team composition planning", "Travel and accommodation coordination", "New distributor scouting at exhibitions"] }
+          ]
+        }
+      ],
+      subdepts: []
+    },
+    {
+      id: "engineering",
+      number: 4,
+      name: "Engineering Department",
+      role: "Head of Engineering",
+      assignee: "",
+      theme: "tech",
+      functions: [
+        "Product design and R&D",
+        "Technical documentation",
+        "Prototype development and testing",
+        "Engineering standards and specifications",
+        "Quality requirements for raw materials and products"
+      ],
+      products: [
+        "Technical drawings & specs",
+        "Prototypes",
+        "R&D reports",
+        "Quality standards"
+      ],
+      subdepts: []
+    },
+    {
+      id: "production",
+      number: 5,
+      name: "Production Department",
+      role: "Technical Director",
+      assignee: "",
+      theme: "tech",
+      functions: [
+        "Manufacturing technology development",
+        "Equipment operation modes setup",
+        "Internal production logistics",
+        "New equipment proposals and procurement",
+        "Quality control of manufacturing process",
+        "Production scheduling and capacity planning"
+      ],
+      products: [
+        "Manufactured roasters",
+        "Production schedules",
+        "Equipment maintenance plans",
+        "Quality control reports"
+      ],
+      subdepts: []
+    },
+    {
+      id: "finance",
+      number: 6,
+      name: "Financial Department",
+      role: "Financial Manager",
+      assignee: "",
+      theme: "finance",
+      functions: [
+        "Department expense requests analysis",
+        "Budget planning by departments",
+        "Cash flow management and positive balance maintenance",
+        "Financial system improvement",
+        "Integration of new finance management tools",
+        "Financial reporting and compliance"
+      ],
+      products: [
+        "Financial reports",
+        "Department budgets",
+        "Cash flow forecasts",
+        "Expense approvals"
+      ],
+      subdepts: []
+    }
+  ]
+};
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let data = loadData();
+let isAdmin = false;
+let editingDeptId = null;
+let editingTopCard = null;
+
+function loadData() {
+  const saved = localStorage.getItem('typhoon-org-data');
+  if (saved) {
+    try { return JSON.parse(saved); }
+    catch(e) { /* fall through */ }
+  }
+  return JSON.parse(JSON.stringify(DEFAULT_DATA));
+}
+
+function saveData() {
+  data.lastUpdated = new Date().toISOString().split('T')[0];
+  localStorage.setItem('typhoon-org-data', JSON.stringify(data));
+  render();
+}
+
+// ═══════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════
+function render() {
+  // Top cards
+  document.getElementById('founders-title').textContent = data.topCards.founders.title;
+  document.getElementById('founders-subtitle').textContent = data.topCards.founders.subtitle;
+  document.getElementById('ceo-title').textContent = data.topCards.ceo.title;
+  document.getElementById('ceo-subtitle').textContent = data.topCards.ceo.subtitle;
+
+  // Last updated
+  const lu = document.getElementById('lastUpdated');
+  lu.textContent = data.lastUpdated ? `Updated: ${data.lastUpdated}` : '';
+
+  // Departments
+  const row = document.getElementById('deptRow');
+  row.innerHTML = '';
+
+  data.departments.forEach((dept, idx) => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'dept-wrapper';
+
+    const line = document.createElement('div');
+    line.className = 'vertical-line';
+    wrapper.appendChild(line);
+
+    const card = document.createElement('div');
+    card.className = `card dept-card dept-${dept.theme}`;
+    card.id = `dept-${dept.id}`;
+    card.onclick = (e) => {
+      if (isAdmin && (e.target.classList.contains('admin-btn') || e.target.closest('.admin-btn'))) return;
+      card.classList.toggle('expanded');
+    };
+
+    const sectionsHtml = (dept.sections && dept.sections.length > 0) ? `
+      <div class="sections-list">
+        <h4>Sections</h4>
+        ${dept.sections.map(sec => `
+          <div class="section-item" onclick="event.stopPropagation(); this.classList.toggle('sec-open')">
+            <div class="section-header">
+              <span class="sec-arrow">&#9656;</span>
+              <span class="sec-number">${sec.id}</span>
+              <span class="sec-name">${sec.name}</span>
+            </div>
+            <div class="section-body">
+              <div class="section-content">
+                ${sec.product ? `<div class="section-product">&#10004; ${sec.product}</div>` : ''}
+                <ul class="section-functions" style="list-style:none;padding:0;">
+                  ${sec.functions.map(f => `<li>${f}</li>`).join('')}
+                </ul>
+                ${sec.subsections && sec.subsections.length > 0 ? sec.subsections.map(sub => `
+                  <div class="subsection" onclick="event.stopPropagation(); this.classList.toggle('subsec-open')">
+                    <div class="subsection-header">
+                      <span class="subsec-arrow">&#9656;</span>
+                      <span class="subsec-name">${sub.name}</span>
+                    </div>
+                    <div class="subsection-body">
+                      <ul>${sub.functions.map(f => `<li>${f}</li>`).join('')}</ul>
+                    </div>
+                  </div>
+                `).join('') : ''}
+              </div>
+            </div>
+          </div>
+        `).join('')}
+      </div>` : '';
+
+    card.innerHTML = `
+      <button class="admin-btn" onclick="editDept('${dept.id}', event)">&#9998;</button>
+      <div class="dept-number">${dept.number}</div>
+      <div class="card-title" style="font-size:13px;">${dept.name}</div>
+      <div class="dept-role">${dept.role}</div>
+      ${dept.assignee ? `<div class="dept-assignee">${dept.assignee}</div>` : '<div class="dept-assignee" style="color:#bbb;">Not assigned</div>'}
+      <div class="expand-indicator"><span class="arrow">&#9656;</span> Details</div>
+      <div class="dept-details">
+        <div class="detail-section">
+          <h4>Functions</h4>
+          <ul>${dept.functions.map(f => `<li>${f}</li>`).join('')}</ul>
+        </div>
+        <div class="detail-section">
+          <h4>Deliverables (Products)</h4>
+          <div>${dept.products.map(p => `<span class="product-tag">${p}</span>`).join('')}</div>
+        </div>
+        ${sectionsHtml}
+      </div>
+    `;
+
+    wrapper.appendChild(card);
+    row.appendChild(wrapper);
+  });
+
+  requestAnimationFrame(fixConnectorLine);
+}
+
+// ═══════════════════════════════════════
+// ADMIN
+// ═══════════════════════════════════════
+function toggleAdmin() {
+  if (isAdmin) {
+    isAdmin = false;
+    document.body.classList.remove('admin-mode');
+    document.getElementById('adminToggle').classList.remove('active');
+    document.getElementById('adminBanner').classList.remove('visible');
+  } else {
+    document.getElementById('passwordModal').classList.add('visible');
+    setTimeout(() => document.getElementById('adminPassword').focus(), 100);
+  }
+}
+
+function checkPassword() {
+  const pwd = document.getElementById('adminPassword').value;
+  if (pwd === data.adminPassword) {
+    isAdmin = true;
+    document.body.classList.add('admin-mode');
+    document.getElementById('adminToggle').classList.add('active');
+    document.getElementById('adminBanner').classList.add('visible');
+    closePasswordModal();
+  } else {
+    document.getElementById('adminPassword').style.borderColor = '#dc3545';
+    document.getElementById('adminPassword').value = '';
+    document.getElementById('adminPassword').placeholder = 'Wrong password';
+  }
+}
+
+function closePasswordModal() {
+  document.getElementById('passwordModal').classList.remove('visible');
+  document.getElementById('adminPassword').value = '';
+  document.getElementById('adminPassword').style.borderColor = '';
+  document.getElementById('adminPassword').placeholder = 'Password';
+}
+
+// ═══════════════════════════════════════
+// EDIT MODALS
+// ═══════════════════════════════════════
+function editTopCard(which, e) {
+  e.stopPropagation();
+  if (!isAdmin) return;
+  editingTopCard = which;
+  const card = data.topCards[which];
+  document.getElementById('modalTitle').textContent = `Edit ${card.title}`;
+  document.getElementById('modalBody').innerHTML = `
+    <label>Title</label>
+    <input id="ed-title" value="${card.title}">
+    <label>Subtitle</label>
+    <input id="ed-subtitle" value="${card.subtitle}">
+  `;
+  document.getElementById('editModal').classList.add('visible');
+}
+
+function editDept(id, e) {
+  e.stopPropagation();
+  if (!isAdmin) return;
+  editingDeptId = id;
+  editingTopCard = null;
+  const dept = data.departments.find(d => d.id === id);
+  const themes = ['support', 'revenue', 'operations', 'tech', 'finance'];
+
+  document.getElementById('modalTitle').textContent = `Edit: ${dept.name}`;
+  document.getElementById('modalBody').innerHTML = `
+    <label>Department Name</label>
+    <input id="ed-name" value="${dept.name}">
+    <label>Role Title</label>
+    <input id="ed-role" value="${dept.role}">
+    <label>Assignee (person name)</label>
+    <input id="ed-assignee" value="${dept.assignee || ''}" placeholder="e.g. John Smith">
+    <label>Theme</label>
+    <select id="ed-theme" style="width:100%;padding:8px;border:1px solid var(--border);border-radius:6px;font-size:13px;">
+      ${themes.map(t => `<option value="${t}" ${dept.theme === t ? 'selected' : ''}>${t}</option>`).join('')}
+    </select>
+    <label>Functions (one per line)</label>
+    <textarea id="ed-functions">${dept.functions.join('\n')}</textarea>
+    <label>Deliverables / Products (one per line)</label>
+    <textarea id="ed-products">${dept.products.join('\n')}</textarea>
+    <label>Sub-departments (JSON, optional)</label>
+    <textarea id="ed-subdepts" style="font-family:monospace;font-size:11px;">${JSON.stringify(dept.subdepts || [], null, 2)}</textarea>
+  `;
+  document.getElementById('editModal').classList.add('visible');
+}
+
+function saveModal() {
+  if (editingTopCard) {
+    data.topCards[editingTopCard].title = document.getElementById('ed-title').value;
+    data.topCards[editingTopCard].subtitle = document.getElementById('ed-subtitle').value;
+    editingTopCard = null;
+  } else if (editingDeptId) {
+    const dept = data.departments.find(d => d.id === editingDeptId);
+    dept.name = document.getElementById('ed-name').value;
+    dept.role = document.getElementById('ed-role').value;
+    dept.assignee = document.getElementById('ed-assignee').value;
+    dept.theme = document.getElementById('ed-theme').value;
+    dept.functions = document.getElementById('ed-functions').value.split('\n').filter(l => l.trim());
+    dept.products = document.getElementById('ed-products').value.split('\n').filter(l => l.trim());
+    try { dept.subdepts = JSON.parse(document.getElementById('ed-subdepts').value); }
+    catch(e) { /* keep existing */ }
+    editingDeptId = null;
+  }
+  closeModal();
+  saveData();
+}
+
+function closeModal() {
+  document.getElementById('editModal').classList.remove('visible');
+  editingDeptId = null;
+  editingTopCard = null;
+}
+
+// Close modal on overlay click
+document.getElementById('editModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+document.getElementById('passwordModal').addEventListener('click', function(e) {
+  if (e.target === this) closePasswordModal();
+});
+
+// ESC to close
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') { closeModal(); closePasswordModal(); }
+});
+
+// Export/Import for backup
+function exportData() {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `typhoon-org-${new Date().toISOString().split('T')[0]}.json`;
+  a.click();
+}
+
+function importData(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      data = JSON.parse(e.target.result);
+      saveData();
+    } catch(err) { alert('Invalid JSON file'); }
+  };
+  reader.readAsText(file);
+}
+
+function resetData() {
+  if (confirm('Reset all changes to defaults?')) {
+    data = JSON.parse(JSON.stringify(DEFAULT_DATA));
+    saveData();
+  }
+}
+
+// Fix horizontal connector line
+function fixConnectorLine() {
+  const row = document.getElementById('deptRow');
+  const wrappers = row.querySelectorAll('.dept-wrapper');
+  if (wrappers.length < 2) return;
+  const first = wrappers[0];
+  const last = wrappers[wrappers.length - 1];
+  const rowRect = row.getBoundingClientRect();
+  const firstCenter = first.getBoundingClientRect().left + first.getBoundingClientRect().width / 2 - rowRect.left;
+  const lastCenter = last.getBoundingClientRect().left + last.getBoundingClientRect().width / 2 - rowRect.left;
+  row.style.setProperty('--line-left', firstCenter + 'px');
+  row.style.setProperty('--line-right', (rowRect.width - lastCenter) + 'px');
+}
+
+// Initial render
+render();
+requestAnimationFrame(fixConnectorLine);
+window.addEventListener('resize', fixConnectorLine);
+</script>
+</body>
+</html>
