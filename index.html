@@ -183,7 +183,7 @@
 
   /* Department cards */
   .dept-card {
-    width: 230px;
+    width: 200px;
     text-align: left;
     cursor: pointer;
     border-left: 4px solid var(--border);
@@ -557,9 +557,13 @@
   .password-modal input { margin-top: 8px; }
 
   /* Responsive */
+  @media (max-width: 1600px) {
+    .departments-row { gap: 6px; }
+    .dept-card { width: 185px; }
+  }
   @media (max-width: 1400px) {
-    .departments-row { gap: 8px; }
-    .dept-card { width: 210px; }
+    .departments-row { gap: 4px; }
+    .dept-card { width: 170px; }
   }
 </style>
 </head>
@@ -959,6 +963,98 @@ const DEFAULT_DATA = {
         "Department budgets",
         "Cash flow forecasts",
         "Expense approvals"
+      ],
+      subdepts: []
+    },
+    {
+      id: "service",
+      number: 7,
+      name: "Service Department",
+      role: "Head of Service",
+      assignee: "",
+      theme: "operations",
+      functions: [
+        "After-sales service and equipment maintenance",
+        "Customer claims resolution",
+        "Commissioning at client premises",
+        "Roasting training and technical consulting",
+        "Spare parts and service supply chain management",
+        "Service quality analysis and continuous improvement"
+      ],
+      products: [
+        "Fault-free equipment at customers' premises",
+        "Roasting knowledge transferred to clients",
+        "Timely spare parts delivery"
+      ],
+      sections: [
+        {
+          id: "7.1",
+          name: "Claims & Quality",
+          product: "Settled claims and loyal customers",
+          functions: [
+            "Customer interaction and claims validity analysis",
+            "Appeals data collection and analysis",
+            "Claims quality assessment",
+            "Issue escalation to Production",
+            "Problem registration monitoring",
+            "Claims reporting"
+          ],
+          subsections: []
+        },
+        {
+          id: "7.2",
+          name: "Field Service",
+          product: "Fault-free operation of equipment at customers' premises",
+          functions: [
+            "On-site service and repair",
+            "Commissioning at client locations",
+            "Equipment diagnostics and repair",
+            "Customer consultation on service issues",
+            "Service order registration for Production",
+            "Spare parts ordering and dispatch",
+            "Operation and maintenance manuals",
+            "Equipment passports and documentation upkeep",
+            "Improvement feedback to Engineering"
+          ],
+          subsections: []
+        },
+        {
+          id: "7.3",
+          name: "Technology & Training",
+          product: "Roasting expertise and technology knowledge for clients",
+          functions: [
+            "Roasting training on Typhoon equipment",
+            "Equipment operation advisory",
+            "Test-drive support for Sales",
+            "Software updates for equipment",
+            "Coffee roasting project launch consulting",
+            "Testing, R&D and reporting",
+            "Equipment manuals and certifications",
+            "Cooperation with certifying agencies",
+            "Operating instructions development"
+          ],
+          subsections: []
+        },
+        {
+          id: "7.4",
+          name: "Service Supply & Logistics",
+          product: "Timely availability of parts, materials and equipment",
+          functions: [
+            "Purchasing conditions analysis and optimization",
+            "Raw materials and spare parts availability",
+            "Procurement documentation management",
+            "Contracts, orders, delivery control",
+            "New suppliers sourcing and evaluation",
+            "Strategic purchasing and cost optimization",
+            "Contractor terms improvement",
+            "Material dispatch coordination",
+            "Logistics provider management",
+            "Inbound delivery organization",
+            "Stock level assessment and optimization",
+            "Document and specification compliance"
+          ],
+          subsections: []
+        }
       ],
       subdepts: []
     }
