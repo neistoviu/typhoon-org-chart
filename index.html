@@ -606,6 +606,20 @@
       <div style="text-align:center;">
         <div class="card-title" id="founders-title">Founders</div>
         <div class="card-subtitle" id="founders-subtitle">Board of Founders</div>
+        <div style="display:flex; justify-content:center; gap:16px; margin-top:10px; flex-wrap:wrap;">
+          <div style="font-size:12px; color:rgba(255,255,255,0.85); background:rgba(255,255,255,0.1); padding:4px 12px; border-radius:6px; text-align:center;">
+            <div style="font-weight:600;" id="founder1-name">Founder 1</div>
+            <div style="font-size:10px; color:rgba(255,255,255,0.5);" id="founder1-share">— %</div>
+          </div>
+          <div style="font-size:12px; color:rgba(255,255,255,0.85); background:rgba(255,255,255,0.1); padding:4px 12px; border-radius:6px; text-align:center;">
+            <div style="font-weight:600;" id="founder2-name">Founder 2</div>
+            <div style="font-size:10px; color:rgba(255,255,255,0.5);" id="founder2-share">— %</div>
+          </div>
+          <div style="font-size:12px; color:rgba(255,255,255,0.85); background:rgba(255,255,255,0.1); padding:4px 12px; border-radius:6px; text-align:center;">
+            <div style="font-weight:600;" id="founder3-name">Founder 3</div>
+            <div style="font-size:10px; color:rgba(255,255,255,0.5);" id="founder3-share">— %</div>
+          </div>
+        </div>
         <div class="expand-indicator" style="justify-content:center; color:rgba(255,255,255,0.5);"><span class="arrow">&#9656;</span> Details</div>
       </div>
       <div class="dept-details">
@@ -632,6 +646,7 @@
       <div style="text-align:center;">
         <div class="card-title" id="ceo-title">CEO</div>
         <div class="card-subtitle" id="ceo-subtitle">Chief Executive Officer</div>
+        <div style="font-size:13px; color:rgba(255,255,255,0.7); margin-top:6px; font-style:italic;" id="ceo-assignee">Not assigned</div>
         <div class="expand-indicator" style="justify-content:center; color:rgba(255,255,255,0.5);"><span class="arrow">&#9656;</span> Details</div>
       </div>
       <div class="dept-details">
@@ -709,8 +724,16 @@ const DEFAULT_DATA = {
   adminPassword: "typhoon2026",
   lastUpdated: "",
   topCards: {
-    founders: { title: "Founders", subtitle: "Board of Founders" },
-    ceo: { title: "CEO", subtitle: "Chief Executive Officer" }
+    founders: {
+      title: "Founders",
+      subtitle: "Board of Founders",
+      members: [
+        { name: "Founder 1", share: "— %" },
+        { name: "Founder 2", share: "— %" },
+        { name: "Founder 3", share: "— %" }
+      ]
+    },
+    ceo: { title: "CEO", subtitle: "Chief Executive Officer", assignee: "" }
   },
   departments: [
     {
@@ -1248,6 +1271,18 @@ function render() {
   document.getElementById('founders-subtitle').textContent = data.topCards.founders.subtitle;
   document.getElementById('ceo-title').textContent = data.topCards.ceo.title;
   document.getElementById('ceo-subtitle').textContent = data.topCards.ceo.subtitle;
+  // Founders members
+  const members = data.topCards.founders.members || [];
+  for (let i = 0; i < 3; i++) {
+    const m = members[i] || { name: 'Founder ' + (i+1), share: '— %' };
+    const nameEl = document.getElementById('founder' + (i+1) + '-name');
+    const shareEl = document.getElementById('founder' + (i+1) + '-share');
+    if (nameEl) nameEl.textContent = m.name;
+    if (shareEl) shareEl.textContent = m.share;
+  }
+  // CEO assignee
+  const ceoAssignee = document.getElementById('ceo-assignee');
+  if (ceoAssignee) ceoAssignee.textContent = data.topCards.ceo.assignee || 'Not assigned';
 
   // Last updated
   const lu = document.getElementById('lastUpdated');
@@ -1281,11 +1316,14 @@ function render() {
             <div class="section-header">
               <span class="sec-arrow">&#9656;</span>
               <span class="sec-number">${sec.id}</span>
-              <span class="sec-name">${sec.name}</span>
+              <div style="flex:1;">
+                <span class="sec-name">${sec.name}</span>
+                ${sec.role ? `<div style="font-size:9px;color:var(--tag-text);font-weight:600;text-transform:uppercase;letter-spacing:0.3px;margin-top:1px;">${sec.role}</div>` : ''}
+                <div style="font-size:10px;color:${sec.assignee ? 'var(--text-secondary)' : '#ccc'};font-style:italic;margin-top:2px;">&#128100; ${sec.assignee || 'Not assigned'}</div>
+              </div>
             </div>
             <div class="section-body">
               <div class="section-content">
-                ${sec.assignee ? `<div style="font-size:11px;color:var(--text-secondary);font-style:italic;margin-top:4px;">&#128100; ${sec.assignee}</div>` : ''}
                 ${sec.product ? `<div class="section-product">&#10004; ${sec.product}</div>` : ''}
                 <ul class="section-functions" style="list-style:none;padding:0;">
                   ${sec.functions.map(f => `<li>${f}</li>`).join('')}
@@ -1380,11 +1418,29 @@ function editTopCard(which, e) {
   editingTopCard = which;
   const card = data.topCards[which];
   document.getElementById('modalTitle').textContent = `Edit ${card.title}`;
+
+  let extraHtml = '';
+  if (which === 'founders' && card.members) {
+    extraHtml = card.members.map((m, i) => `
+      <label>Founder ${i+1} — Name</label>
+      <input class="founder-name-input" data-idx="${i}" value="${m.name}">
+      <label>Founder ${i+1} — Share</label>
+      <input class="founder-share-input" data-idx="${i}" value="${m.share}" placeholder="e.g. 40%">
+    `).join('');
+  }
+  if (which === 'ceo') {
+    extraHtml = `
+      <label>Assignee (person name)</label>
+      <input id="ed-ceo-assignee" value="${card.assignee || ''}" placeholder="e.g. Daniil Samsonov">
+    `;
+  }
+
   document.getElementById('modalBody').innerHTML = `
     <label>Title</label>
     <input id="ed-title" value="${card.title}">
     <label>Subtitle</label>
     <input id="ed-subtitle" value="${card.subtitle}">
+    ${extraHtml}
   `;
   document.getElementById('editModal').classList.add('visible');
 }
@@ -1414,13 +1470,15 @@ function editDept(id, e) {
     <label>Deliverables / Products (one per line)</label>
     <textarea id="ed-products">${dept.products.join('\n')}</textarea>
     ${dept.sections && dept.sections.length > 0 ? `
-      <label>Section Assignees</label>
-      <div style="background:#f8f9fa;border-radius:6px;padding:8px;margin-top:4px;">
+      <label>Section Assignees & Roles</label>
+      <div style="background:#f8f9fa;border-radius:6px;padding:10px;margin-top:4px;">
         ${dept.sections.map((sec, i) => `
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-            <span style="font-size:11px;font-weight:600;min-width:30px;">${sec.id}</span>
-            <span style="font-size:12px;flex:1;">${sec.name}</span>
-            <input class="sec-assignee-input" data-sec-idx="${i}" value="${sec.assignee || ''}" placeholder="Assignee..." style="width:140px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:12px;">
+          <div style="margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #e8e8e8;">
+            <div style="font-size:11px;font-weight:700;margin-bottom:4px;">${sec.id} — ${sec.name}</div>
+            <div style="display:flex;gap:6px;">
+              <input class="sec-role-input" data-sec-idx="${i}" value="${sec.role || ''}" placeholder="Role title..." style="flex:1;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:12px;">
+              <input class="sec-assignee-input" data-sec-idx="${i}" value="${sec.assignee || ''}" placeholder="Person name..." style="flex:1;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:12px;">
+            </div>
           </div>
         `).join('')}
       </div>
@@ -1435,6 +1493,26 @@ function saveModal() {
   if (editingTopCard) {
     data.topCards[editingTopCard].title = document.getElementById('ed-title').value;
     data.topCards[editingTopCard].subtitle = document.getElementById('ed-subtitle').value;
+    // Save founder members
+    if (editingTopCard === 'founders') {
+      const names = document.querySelectorAll('.founder-name-input');
+      const shares = document.querySelectorAll('.founder-share-input');
+      if (!data.topCards.founders.members) data.topCards.founders.members = [];
+      names.forEach(input => {
+        const idx = parseInt(input.dataset.idx);
+        if (!data.topCards.founders.members[idx]) data.topCards.founders.members[idx] = {};
+        data.topCards.founders.members[idx].name = input.value;
+      });
+      shares.forEach(input => {
+        const idx = parseInt(input.dataset.idx);
+        data.topCards.founders.members[idx].share = input.value;
+      });
+    }
+    // Save CEO assignee
+    if (editingTopCard === 'ceo') {
+      const ceoInput = document.getElementById('ed-ceo-assignee');
+      if (ceoInput) data.topCards.ceo.assignee = ceoInput.value;
+    }
     editingTopCard = null;
   } else if (editingDeptId) {
     const dept = data.departments.find(d => d.id === editingDeptId);
@@ -1444,13 +1522,14 @@ function saveModal() {
     dept.theme = document.getElementById('ed-theme').value;
     dept.functions = document.getElementById('ed-functions').value.split('\n').filter(l => l.trim());
     dept.products = document.getElementById('ed-products').value.split('\n').filter(l => l.trim());
-    // Save section assignees from quick inputs
-    const secInputs = document.querySelectorAll('.sec-assignee-input');
-    secInputs.forEach(input => {
+    // Save section assignees and roles from quick inputs
+    document.querySelectorAll('.sec-assignee-input').forEach(input => {
       const idx = parseInt(input.dataset.secIdx);
-      if (dept.sections && dept.sections[idx]) {
-        dept.sections[idx].assignee = input.value;
-      }
+      if (dept.sections && dept.sections[idx]) dept.sections[idx].assignee = input.value;
+    });
+    document.querySelectorAll('.sec-role-input').forEach(input => {
+      const idx = parseInt(input.dataset.secIdx);
+      if (dept.sections && dept.sections[idx]) dept.sections[idx].role = input.value;
     });
     // Save full sections JSON (advanced)
     try { const secJson = JSON.parse(document.getElementById('ed-sections').value); dept.sections = secJson; }
